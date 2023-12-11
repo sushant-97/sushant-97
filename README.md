@@ -11,7 +11,7 @@ Collaborating on projects 🤝, chatting about tech 💬, and always looking for
 Let's build a better future together! 🤝 
 
 * 🌍  I'm based in India
-* ✉️  You can contact me at [vidhiwaghela99@gmail.com](mailto:sushant.pargaonkar97@gmail.com )
+* ✉️  You can contact me at [GMAIL](mailto:sushant.pargaonkar97@gmail.com)
 * 🤝  I'm open to collaborating on Intersection of NLP, Computer Vision and Data science, 🛡️ projects on Kaggle 📊.
 
 ## Skills
@@ -70,4 +70,4 @@ Let's build a better future together! 🤝
 
 <b>My GitHub Stats</b>
 
-<a href="http://www.github.com/Vidhi1290"><img src="https://github-readme-streak-stats.herokuapp.com/?user=Vidhi1290&stroke=ffffff&background=1c1917&ring=0891b2&fire=0891b2&currStreakNum=ffffff&currStreakLabel=0891b2&sideNums=ffffff&sideLabels=ffffff&dates=ffffff&hide_border=true" /></a>
+<a href="http://www.github.com/sushant-97"><img src="https://github-readme-streak-stats.herokuapp.com/?user=sushant-97&stroke=ffffff&background=1c1917&ring=0891b2&fire=0891b2&currStreakNum=ffffff&currStreakLabel=0891b2&sideNums=ffffff&sideLabels=ffffff&dates=ffffff&hide_border=true" /></a>
