@@ -1,73 +1,123 @@
-Hi 👋 My name is Sushant Pargaonkar
-==============================
+"""
+utility functions to optimize a trained transformers model through:
+1. serialization (ONNX or TorchScript tracing)
+2. dynamic quantization (PyTorch/TorchScript or ONNX Runtime)
+3. pruning random heads
 
-Data science 🔬 + NLP 🛡️ = Me!
------------------------------------------
+Note: pruning random heads is only intended to be used an an experimental method to
+measure the impact of pruning on resource usage. The correct way to prune attention
+heads should be based on the relative importance of each head (see https://arxiv.org/abs/1905.10650)
+"""
 
-Data science researcher and nlp enthusiast with a passion for using tech to make a difference 🚀.
+import os
+import warnings
 
-Collaborating on projects 🤝, chatting about tech 💬, and always looking for new challenges 💯. 
+import torch
+from torch.onnx import export
+from onnxruntime.quantization import quantize_dynamic, QuantType
 
-Let's build a better future together! 🤝 
-
-* 🌍  I'm based in India
-* ✉️  You can contact me at [GMAIL](mailto:sushant.pargaonkar97@gmail.com)
-* 🤝  I'm open to collaborating on Intersection of NLP, Computer Vision and Data science, 🛡️ projects on Kaggle 📊.
-
-## Skills
-
-### Computer vision
-
-[![OpenCV](https://img.shields.io/badge/OpenCV-%23000000.svg?style=for-the-badge&logo=opencv)](https://opencv.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/)
-[![scikit-image](https://img.shields.io/badge/scikit-image-%233465A4.svg?style=for-the-badge)](https://scikit-image.org/)
-
-### Artificial Intelligence
-
-[![scikit-learn](https://img.shields.io/badge/scikit-learn-%23008000.svg?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org/stable/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/)
-[![scikit-optimize](https://img.shields.io/badge/scikit-optimize-%23F0E442.svg?style=for-the-badge&logo=scikit-optimize)](https://scikit-optimize.org/)
-
-### Machine learning
-
-[![scikit-learn](https://img.shields.io/badge/scikit-learn-%23008000.svg?style=for-the-badge&logo=scikit-learn)](https://scikit-learn.org/stable/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/)
-[![XGBoost](https://img.shields.io/badge/XGBoost-%230086B3.svg?style=for-the-badge&logo=xgboost)](https://xgboost.org/)
-[![SVM](https://img.shields.io/badge/SVM-Support%20Vector%20Machines-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Support_vector_machine)
-[![Linear%20Regression](https://img.shields.io/badge/Linear%20Regression-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Linear_regression)
-[![Logistic%20Regression](https://img.shields.io/badge/Logistic%20Regression-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Logistic_regression)
-[![Random%20Forest](https://img.shields.io/badge/Random%20Forest-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Random_forest)
-[![KNN](https://img.shields.io/badge/KNN-K-Nearest%20Neighbors-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm)
-[![K-Means%20Clustering](https://img.shields.io/badge/K-Means%20Clustering-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/K-means_clustering)
-[![XGBoost](https://img.shields.io/badge/XGBoost-%230086B3.svg?style=for-the-badge&logo=xgboost)](https://xgboost.org/)
-
-### Deep learning
-
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-%23FF6F00.svg?style=for-the-badge&logo=tensorflow)](https://www.tensorflow.org/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?style=for-the-badge&logo=pytorch)](https://pytorch.org/)
-[![PyTorch Lightning](https://img.shields.io/badge/PyTorch%20Lightning-%237B2736.svg?style=for-the-badge&logo=pytorch-lightning)](https://www.pytorchlightning.ai/)
-[![Keras](https://img.shields.io/badge/Keras-%23D00000.svg?style=for-the-badge&logo=keras)](https://keras.io/)
+from model_utils import load_model, load_tokenizer
 
 
-[![CNN badge](https://img.shields.io/badge/CNN-Convolutional%20Neural%20Network-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Convolutional_neural_network)
-[![DNN badge](https://img.shields.io/badge/DNN-Deep%20Neural%20Network-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Deep_neural_network)
-[![RNN badge](https://img.shields.io/badge/RNN-Recurrent%20Neural%20Network-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Recurrent_neural_network)
-[![GAN badge](https://img.shields.io/badge/GAN-Generative%20Adversarial%20Network-informational.svg?style=for-the-badge)](https://en.wikipedia.org/wiki/Generative_adversarial_network)
+# model serialization
 
-<p align="left">
-<a href="https://docs.microsoft.com/en-us/cpp/?view=msvc-170" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/cplusplus-colored.svg" width="36" height="36" alt="C++" /></a><a href="https://www.r-project.org/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/rlang-colored.svg" width="36" height="36" alt="rlang" /></a><a href="https://www.oracle.com/java/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/java-colored.svg" width="36" height="36" alt="Java" /></a><a href="https://www.python.org/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/python-colored.svg" width="36" height="36" alt="Python" /></a><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/javascript-colored.svg" width="36" height="36" alt="JavaScript" /></a><a href="https://www.mysql.com/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/mysql-colored.svg" width="36" height="36" alt="MySQL" /></a><a href="https://flask.palletsprojects.com/en/2.0.x/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/flask-colored-dark.svg" width="36" height="36" alt="Flask" /></a><a href="https://www.tensorflow.org/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/tensorflow-colored.svg" width="36" height="36" alt="TensorFlow" /></a><a href="https://pytorch.org/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/pytorch-colored.svg" width="36" height="36" alt="PyTorch" /></a><a href="https://apple.com" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/macos-colored-dark.svg" width="36" height="36" alt="MacOS" /></a><a href="https://www.linux.org" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/linux-colored.svg" width="36" height="36" alt="Linux" /></a><a href="https://www.docker.com/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/docker-colored.svg" width="36" height="36" alt="Docker" /></a><a href="https://aws.amazon.com" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/aws-colored-dark.svg" width="36" height="36" alt="Amazon Web Services" /></a><a href="https://www.figma.com/" target="_blank" rel="noreferrer"><img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/skills/figma-colored.svg" width="36" height="36" alt="Figma" /></a>
-</p>
+def to_onnx(model_name: str, output_dirpath: str, feature_name: str = "sequence-classification") -> None:
+    """
+    Convert a transformers model to ONNX and save at output_filepath.
+    From: https://huggingface.co/docs/transformers/master/serialization
+    Note: Assumes the tokenizer is saved alongside the model (i.e., tokenizer name
+    matches the model name).
+    """
+    command = "python -m transformers.onnx"
+    command += " --model=" + model_name
+    command += " --feature=" + feature_name
+    command += " " + output_dirpath
+    os.system(command)
 
 
-### Socials
+def torchscript_trace(model, tokenizer):
+    """
+    trace a transformers model using torch.jit.trace
+    """
+    model.eval()
+    inputs = tokenizer.encode_plus(
+        "sample text",
+        return_tensors = 'pt')
+    with torch.no_grad():
+        # strict=False needed for quantization
+        torchscript_model = torch.jit.trace(model, [inputs["input_ids"], inputs["attention_mask"]], strict=False)
+    return torchscript_model
 
-<p align="left"> <a href="https://www.github.com/Vidhi1290" target="_blank" rel="noreferrer"> <picture> <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/github-dark.svg" /> <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/github.svg" /> <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/github.svg" width="32" height="32" /> </picture> </a> <a href="http://www.instagram.com/vidhi_waghela__" target="_blank" rel="noreferrer"> <picture> <source media="(prefers-color-scheme: dark)" srcset="undefined" /> <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/instagram.svg" /> <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/instagram.svg" width="32" height="32" /> </picture> </a> <a href="https://www.linkedin.com/in//vidhi-waghela-434663198" target="_blank" rel="noreferrer"> <picture> <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin-dark.svg" /> <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" /> <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/linkedin.svg" width="32" height="32" /> </picture> </a> <a href="http://www.medium.com/@datasciencemeetscybersecurity" target="_blank" rel="noreferrer"> <picture> <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/medium-dark.svg" /> <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/medium.svg" /> <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/medium.svg" width="32" height="32" /> </picture> </a> <a href="https://www.x.com/VidhiWaghela" target="_blank" rel="noreferrer"> <picture> <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/twitter-dark.svg" /> <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/twitter.svg" /> <img src="https://raw.githubusercontent.com/danielcranney/readme-generator/main/public/icons/socials/twitter.svg" width="32" height="32" /> </picture> </a></p>
 
-### Badges
+def torchscript_save(torchscript_model, output_filepath):
+    """
+    save a traced model to output_filepath
+    """
+    torch.jit.save(torchscript_model, output_filepath)
 
-<b>My GitHub Stats</b>
 
-<a href="http://www.github.com/sushant-97"><img src="https://github-readme-streak-stats.herokuapp.com/?user=sushant-97&stroke=ffffff&background=1c1917&ring=0891b2&fire=0891b2&currStreakNum=ffffff&currStreakLabel=0891b2&sideNums=ffffff&sideLabels=ffffff&dates=ffffff&hide_border=true" /></a>
+def to_torchscript(model_name, tokenizer_name, output_dirpath, method: str = "tracing"):
+    """
+    convert a transformers model to TorchScript and save to output_dirpath
+    method is either "tracing" or "scripting", but scripting is currently not supported
+    """
+    if not os.path.exists(output_dirpath):
+        os.makedirs(output_dirpath)
+    # method is either 'tracing' or 'scripting' (not supported)
+    model = load_model(model_name, torchscript=True)
+    tokenizer = load_tokenizer(tokenizer_name)
+    if method == "tracing":
+        torchscript_model = torchscript_trace(model, tokenizer)
+    else:
+        warnings.warn("'scripting' is not currently supported, please use 'tracing'")
+        model.eval()
+        torchscript_model = torch.jit.script(model)
+    torchscript_save(torchscript_model, os.path.join(output_dirpath, method + ".pt"))
+
+
+# model quantization
+
+def quantize_onnx_model(onnx_model_path: str, output_filepath: str) -> None:
+    """quantize an ONNX model using onnxruntime and save to output_filepath"""
+    quantize_dynamic(onnx_model_path, output_filepath, weight_type=QuantType.QInt8)
+
+
+def quantize_pytorch_model(model_name: str, tokenizer_name: str, output_dirpath: str) -> None:
+    """
+    quantize linear layers of a PyTorch model and serialize/save to output_dirpath using
+    TorchScript
+    """
+
+    model = load_model(model_name)
+    model_int8 = torch.quantization.quantize_dynamic(
+        model,
+        {torch.nn.Linear},
+        dtype=torch.qint8
+    )
+    tokenizer = load_tokenizer(tokenizer_name)
+    torchscript_model = torchscript_trace(model_int8, tokenizer)
+    if not os.path.exists(output_dirpath):
+        os.makedirs(output_dirpath)
+    torchscript_save(torchscript_model, os.path.join(output_dirpath, "model.pt"))
+
+
+# pruning
+
+def prune_random_heads(model_name, frac_heads_per_layer, output_dir):
+    """
+    randomly prune fractional number of attention heads per layer from a model and save to output_dir
+
+    Note: pruning random heads is only intended to be used an an experimental method to
+    measure the impact of pruning on resource usage. The correct way to prune attention
+    heads should be based on the relative importance of each head (see https://arxiv.org/abs/1905.10650)
+    """
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    model = load_model(model_name)
+    tokenizer = load_tokenizer(model_name)
+    n_layers, n_heads = model.config.num_hidden_layers, model.config.num_attention_heads
+    heads_to_prune = list(range(int(n_heads * frac_heads_per_layer)))
+    heads_to_prune = {layer: heads_to_prune for layer in range(n_layers)}
+    model.prune_heads(heads_to_prune)
+    model.save_pretrained(output_dir)
+    tokenizer.save_pretrained(output_dir)
