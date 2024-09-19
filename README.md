@@ -88,18 +88,20 @@ Hey there! I'm an ML Research Engineer passionate about leveraging deep learning
     </td>
   </tr>
 </table>
---
+
+#
+
 ### 🚀 What I'm Working On
     🏅 NeuralIPS 2024 LLM Merging Competition
     🤖 Researching Reinforcement Learning for LLM agents
     🔬 Diving deep into large-scale ML research with a coding focus
 
---
+#
 
 ### 🌟 Let's Connect!
 <table> <tr> <td align="center"> <a href="https://github.com/sushant-97" target="_blank"> <img alt="GitHub" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" /> <br /> <strong>GitHub</strong> </a> </td> <td align="center"> <a href="https://www.linkedin.com/in/spargaonkar/" target="_blank"> <img alt="LinkedIn" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" /> <br /> <strong>LinkedIn</strong> </a> </td> <td align="center"> <a href="mailto:sushant.pargaonkar97.com" target="_blank"> <img alt="Email" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" /> <br /> <strong>Email</strong> </a> </td> <td align="center"> <a href="https://twitter.com/sushant_p18" target="_blank"> <img alt="Twitter" width="40px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg" /> <br /> <strong>Twitter</strong> </a> </td> </tr> </table>
 
---
+#
 
 ### 📊 Stats
 
