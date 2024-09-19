@@ -1,3 +1,4 @@
+### ⚡ Sushant Pargaonkar
 **`Machine Learning Engineer | Problem Solver | Tech Enthusiast`**
 
 Hey there! I'm an ML Research Engineer passionate about leveraging deep learning, computer vision, and NLP to solve complex, real-world problems. I thrive on challenges that push me to code hard, think creatively, and collaborate with fellow engineers and researchers. Currently, I’m diving into the NeuralIPS 2024 competition, where I’m focusing on LLM Merging, exploring new techniques for combining large language models.
