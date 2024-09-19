@@ -57,8 +57,9 @@ Right now, I’m deep into the NeuralIPS 2024 competition, exploring LLM Merging
     🤖 Researching Reinforcement Learning for LLM agents
     🔬 Diving deep into large-scale ML research with a coding focus
 
-### Connect with me!
-    <p align="center"> <a href="https://github.com/yourusername"> <img alt="GitHub" width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" /> </a>     &nbsp;&nbsp;&nbsp; <a href="https://www.linkedin.com/in/yourusername/"> <img alt="LinkedIn" width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin- original.svg" /> </a> &nbsp;&nbsp;&nbsp; <a href="mailto:yourname@example.com"> <img alt="Email" width="30px" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" /> </a> </p>
+### 🌟 Let's Connect!
+<p align="left"> <a href="https://github.com/sushant-97" target="_blank"> <img alt="GitHub" width="40px" style="padding-right: 15px;" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" /> </a> <a href="https://www.linkedin.com/in/spargaonkar/" target="_blank"> <img alt="LinkedIn" width="40px" style="padding-right: 15px;" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linkedin/linkedin-original.svg" /> </a> <a href="mailto:sushant.pargaonkar97.com" target="_blank"> <img alt="Email" width="40px" style="padding-right: 15px;" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" /> </a> <a href="https://x.com/sushant_p18" target="_blank"> <img alt="Twitter" width="40px" style="padding-right: 15px;" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/twitter/twitter-original.svg" /> </a> </p>
+
 
 ### 📊 Stats
 
