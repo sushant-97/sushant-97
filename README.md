@@ -1,12 +1,10 @@
 **`Machine Learning Research Engineer | Problem Solver | Tech Enthusiast`**
 
-Hey there! I'm an ML Research Engineer passionate about leveraging deep learning, computer vision, and NLP to solve complex, real-world problems. I thrive on challenges that push me to code hard, think creatively, and collaborate with fellow engineers and researchers.
+Hey there! I'm an ML Research Engineer passionate about leveraging deep learning, computer vision, and NLP to solve complex, real-world problems. I thrive on challenges that push me to code hard, think creatively, and collaborate with fellow engineers and researchers. Currently, I’m diving into the NeuralIPS 2024 competition, where I’m focusing on LLM Merging, exploring new techniques for combining large language models.
 
-Right now, I’m deep into the NeuralIPS 2024 competition, exploring LLM Merging and researching how Reinforcement Learning can make large language models more robust and efficient.
-
-🧠 Current Focus: LLM Merging & RL for resilient LLM agents
-🏆 Goals: Solving tough problems with cutting-edge tech
-💬 Let’s Connect: I'm always open to new collaborations and discussions in ML research!
+    🧠 Current Focus: LLM Merging & RL for robust LLM agents
+    🏆 Goals: Solving tough problems with cutting-edge tech
+    💬 Let’s Connect: I'm always open to new collaborations and discussions in ML research!
 
 ### 🧰 Languages and Tools
 
